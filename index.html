@@ -1,0 +1,175 @@
+from pathlib import Path
+import zipfile
+
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050914">
+<title>ReactRush — Reflex Arena</title>
+<style>
+:root{--bg:#050914;--card:#0b1324;--card2:#101b30;--txt:#f5f7ff;--muted:#8d9ab1;--green:#35f28b;--cyan:#45d8ff;--red:#ff4f68;--gold:#ffd45b;--line:#ffffff14;--r:22px}
+*{box-sizing:border-box}body{margin:0;color:var(--txt);background:radial-gradient(circle at 15% -10%,#17335c 0,#050914 42%),var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}button{font:inherit;color:inherit;border:0;cursor:pointer}.app{max-width:1220px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}.brand{display:flex;gap:11px;align-items:center}.logo{width:45px;height:45px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--green),var(--cyan));color:#03120b;font-size:22px;font-weight:950;box-shadow:0 12px 35px #35f28b22}.brand b{font-size:19px}.brand small{display:block;color:var(--muted)}nav{display:flex;gap:7px;flex-wrap:wrap}nav button,.ghost{padding:9px 12px;border-radius:11px;background:#ffffff08;border:1px solid var(--line);color:#cbd5e6}nav button.active{background:#ffffff12;color:#fff}.screen{display:none}.screen.active{display:block}.gridHero{display:grid;grid-template-columns:1.3fr .7fr;gap:15px}.card{background:linear-gradient(180deg,#0d172add,#091120dd);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 25px 75px #0005}.hero{padding:34px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.16em;color:var(--green);text-transform:uppercase}.hero h1{font-size:clamp(38px,6vw,70px);line-height:.92;letter-spacing:-.06em;margin:13px 0}.hero p{color:var(--muted);line-height:1.65;max-width:690px}.primary{background:linear-gradient(135deg,var(--green),var(--cyan));color:#03120b;font-weight:950;padding:12px 17px;border-radius:13px;box-shadow:0 12px 30px #35f28b25}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:17px}.stat{background:#ffffff05;border:1px solid var(--line);border-radius:16px;padding:15px}.stat span{color:var(--muted);font-size:11px}.stat b{display:block;font-size:25px;margin-top:5px}.title{display:flex;justify-content:space-between;align-items:center;margin:23px 2px 11px}.title h2,.title h3{margin:0}.title small{color:var(--muted)}.games{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.game{padding:20px}.gameIcon{font-size:31px}.game h3{margin:9px 0 5px}.game p{font-size:13px;color:var(--muted);line-height:1.5;min-height:42px}.game button{width:100%}.wide{padding:20px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px}.table th{color:var(--muted)}.play{padding:18px}.playtop{display:flex;justify-content:space-between;align-items:center;gap:10px}.playtop h2{margin:0;font-size:27px}.pill{background:#ffffff08;border:1px solid var(--line);border-radius:99px;padding:7px 10px;color:#bdc8db;font-size:12px}.modes{display:flex;gap:6px;flex-wrap:wrap}.modes button{padding:7px 10px;background:#ffffff08;border:1px solid var(--line);border-radius:9px;font-size:11px}.modes button.sel{color:var(--green);border-color:#35f28b55;background:#35f28b0b}.arena{height:470px;margin-top:15px;border-radius:22px;background:#141a27;border:1px solid var(--line);display:grid;place-items:center;position:relative;overflow:hidden;user-select:none}.arena.red{background:radial-gradient(circle,#ff596f,#6b1628 65%,#18070c)}.arena.green{background:radial-gradient(circle,#5bffa3,#12663d 65%,#051b10)}.arena.blue{background:radial-gradient(circle,#57cfff,#164b70 65%,#06121b)}.signal{text-align:center;font-size:clamp(45px,9vw,90px);font-weight:950;letter-spacing:-.07em}.arenaText p{color:#ffffffaa;text-align:center}.live{position:absolute;left:17px;top:15px;font-variant-numeric:tabular-nums;color:#fff9}.round{position:absolute;right:17px;top:15px;color:#fff9}.target{position:absolute;width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,#fff 0 8%,#35f28b 9% 42%,#0a5d38 43%);border:3px solid white;box-shadow:0 0 45px #35f28b99}.controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:13px}.results{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:13px}.box{padding:14px;border:1px solid var(--line);border-radius:14px;background:#ffffff05}.box span{font-size:10px;color:var(--muted)}.box b{display:block;font-size:20px;margin-top:4px}.dash{display:grid;grid-template-columns:1fr 1fr;gap:13px}.panel{padding:21px}.big{font-size:50px;font-weight:950;color:var(--green);margin:7px 0}.bar{height:9px;border-radius:99px;background:#ffffff09;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:99px}.ach{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.badge{padding:13px;border:1px solid var(--line);border-radius:14px;background:#ffffff05}.badge.lock{opacity:.35}.badge b{display:block;margin-bottom:4px}.badge small{color:var(--muted)}.settings{display:grid;gap:10px}.setting{display:flex;justify-content:space-between;align-items:center;padding:15px;border:1px solid var(--line);border-radius:14px;background:#ffffff05}.toggle{width:47px;height:27px;border-radius:99px;background:#273247;padding:3px}.toggle i{display:block;width:21px;height:21px;border-radius:50%;background:white;transition:.2s}.toggle.on{background:#20b96b}.toggle.on i{transform:translateX(20px)}.footer{text-align:center;color:#637189;font-size:12px;padding:25px}.footer strong{color:#aebbd0}.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;padding:18px;z-index:10}.modal.show{display:grid}.modalbox{width:min(520px,100%);padding:26px}.modalbox h2{font-size:35px;margin:9px 0}.score{width:145px;height:145px;border-radius:50%;display:grid;place-items:center;margin:14px auto;background:radial-gradient(circle,#15283c 55%,#35f28b25 56%,transparent 72%);font-size:35px;font-weight:950;color:var(--green)}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,30px);opacity:0;background:#111b2e;border:1px solid var(--line);padding:11px 16px;border-radius:12px;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:850px){.gridHero,.dash{grid-template-columns:1fr}.games{grid-template-columns:1fr 1fr}.results{grid-template-columns:repeat(3,1fr)}}@media(max-width:560px){.app{padding:12px}.top{align-items:flex-start}.hero{padding:24px}.games{grid-template-columns:1fr}.arena{height:430px}.results{grid-template-columns:1fr 1fr}.ach{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand"><div class="logo">⚡</div><div><b>ReactRush</b><small>Reflex Arena</small></div></div>
+ <nav><button class="active" data-go="home">Home</button><button data-go="play">Play</button><button data-go="stats">Stats</button><button data-go="achievements">Awards</button><button data-go="settings">Settings</button></nav>
+</header>
+
+<section id="home" class="screen active">
+ <div class="gridHero">
+  <div class="card hero"><div class="eyebrow">Reaction • Reflex • Speed</div><h1>How fast can you react?</h1><p>Train your reflexes, beat your records and level up. ReactRush turns reaction testing into a complete arcade-style experience with multiple games, achievements, XP, streaks and detailed statistics.</p><button class="primary" onclick="startGame('classic')">⚡ Start Reaction Test</button></div>
+  <div class="card stats">
+   <div class="stat"><span>Personal Best</span><b id="hBest">—</b></div><div class="stat"><span>Average</span><b id="hAvg">—</b></div>
+   <div class="stat"><span>Level</span><b id="hLevel">1</b></div><div class="stat"><span>XP</span><b id="hXP">0</b></div>
+   <div class="stat"><span>Games</span><b id="hGames">0</b></div><div class="stat"><span>Streak</span><b id="hStreak">0 🔥</b></div>
+  </div>
+ </div>
+ <div class="title"><h3>Choose your challenge</h3><small>Train different reflex skills</small></div>
+ <div class="games">
+  <div class="card game"><div class="gameIcon">🔴🟢</div><h3>Classic Reaction</h3><p>Five rounds. Wait for green and react as fast as possible.</p><button class="primary" onclick="startGame('classic')">Play</button></div>
+  <div class="card game"><div class="gameIcon">🎯</div><h3>Target Tap</h3><p>Hit five targets appearing at unpredictable positions.</p><button class="primary" onclick="startGame('target')">Play</button></div>
+  <div class="card game"><div class="gameIcon">🎨</div><h3>Color Rush</h3><p>React to the correct color while avoiding wrong signals.</p><button class="primary" onclick="startGame('color')">Play</button></div>
+  <div class="card game"><div class="gameIcon">🔥</div><h3>60s Reflex Rush</h3><p>Score as many correct reactions as you can before time runs out.</p><button class="primary" onclick="startGame('rush')">Play</button></div>
+  <div class="card game"><div class="gameIcon">🧠</div><h3>Memory Sequence</h3><p>Watch the sequence and reproduce it using the color buttons.</p><button class="primary" onclick="startGame('memory')">Play</button></div>
+  <div class="card game"><div class="gameIcon">🚫</div><h3>Don't Click</h3><p>Green is safe. Red is dangerous. Stay focused and survive five rounds.</p><button class="primary" onclick="startGame('dont')">Play</button></div>
+ </div>
+ <div class="title"><h3>Recent games</h3><small>Saved on this device</small></div><div class="card wide" id="recent"></div>
+</section>
+
+<section id="play" class="screen">
+ <div class="card play">
+  <div class="playtop"><div><h2 id="gameTitle">Classic Reaction</h2><span class="pill" id="round">Round 1 / 5</span></div><div class="modes"><button data-d="easy">Easy</button><button class="sel" data-d="normal">Normal</button><button data-d="hard">Hard</button></div></div>
+  <div class="arena" id="arena" onclick="arenaClick(event)"><div class="live" id="live">0 ms</div><div class="round" id="roundTop">0/5</div><div class="arenaText"><div class="signal" id="signal">READY?</div><p id="instruction">Press Start Game to begin</p></div></div>
+  <div class="controls" id="extraControls"></div>
+  <div class="controls"><button class="primary" id="action" onclick="action()">Start Game</button><button class="ghost" onclick="go('home')">Exit</button></div>
+  <div class="results"><div class="box"><span>Best</span><b id="sBest">—</b></div><div class="box"><span>Average</span><b id="sAvg">—</b></div><div class="box"><span>Score</span><b id="sScore">0</b></div><div class="box"><span>Accuracy</span><b id="sAcc">100%</b></div><div class="box"><span>Combo</span><b id="sCombo">0x</b></div></div>
+ </div>
+</section>
+
+<section id="stats" class="screen">
+ <div class="title"><h2>Performance Dashboard</h2><small>Your lifetime records</small></div>
+ <div class="dash">
+  <div class="card panel"><span class="eyebrow">Personal Best</span><div class="big" id="stBest">—</div><p style="color:var(--muted)">Fastest valid classic reaction.</p></div>
+  <div class="card panel"><span class="eyebrow">Average Reaction</span><div class="big" id="stAvg">—</div><p style="color:var(--muted)">Average of your classic attempts.</p></div>
+  <div class="card panel"><h3>Player Level</h3><div style="font-size:28px;font-weight:900" id="levelText">Level 1</div><p style="color:var(--muted)" id="xpText">0 XP</p><div class="bar"><i id="xpBar" style="width:0%"></i></div></div>
+  <div class="card panel"><h3>Accuracy</h3><div class="big" id="stAcc">100%</div><p style="color:var(--muted)">Successful actions vs. total actions.</p></div>
+  <div class="card panel"><h3>Game Activity</h3><p>Games completed: <b id="stGames">0</b></p><p>Total attempts: <b id="stAttempts">0</b></p><p>Best score: <b id="stScore">0</b></p><p>Current streak: <b id="stStreak">0 days 🔥</b></p></div>
+  <div class="card panel"><h3>Last Classic Attempts</h3><div id="attempts"></div></div>
+ </div>
+</section>
+
+<section id="achievements" class="screen">
+ <div class="title"><h2>Achievements</h2><small>Unlock badges by playing</small></div>
+ <div class="card panel"><div class="ach" id="ach"></div></div>
+</section>
+
+<section id="settings" class="screen">
+ <div class="title"><h2>Settings</h2><small>Customize your arena</small></div>
+ <div class="card panel settings">
+  <div class="setting"><div><b>Sound Effects</b><br><small style="color:var(--muted)">Game feedback sounds</small></div><button class="toggle on" id="sound" onclick="toggle('sound')"><i></i></button></div>
+  <div class="setting"><div><b>Countdown</b><br><small style="color:var(--muted)">Use reaction countdown timing</small></div><button class="toggle on" id="count" onclick="toggle('count')"><i></i></button></div>
+  <div class="setting"><div><b>Practice Mode</b><br><small style="color:var(--muted)">Practice without adding records</small></div><button class="toggle" id="practice" onclick="toggle('practice')"><i></i></button></div>
+  <div class="setting"><div><b>Reset All Data</b><br><small style="color:var(--muted)">Delete local records, XP and achievements</small></div><button class="ghost" onclick="resetAll()">Reset</button></div>
+ </div>
+ <div class="card panel" style="margin-top:13px"><h3>About ReactRush</h3><p style="color:var(--muted);line-height:1.7">A browser-based reflex training arcade. Your statistics are stored locally on your device; no account is required.</p><p>Designed & Built by <strong style="color:var(--green)">Ansh Kumar</strong> ⚡</p></div>
+</section>
+
+<footer class="footer">ReactRush • Reflex Arena • Designed & Built by <strong>Ansh Kumar</strong></footer>
+</div>
+
+<div class="modal" id="modal"><div class="card modalbox"><div class="eyebrow">Challenge Complete</div><h2 id="modalTitle">Great run! ⚡</h2><div class="score" id="modalScore">0</div><div class="results"><div class="box"><span>Average</span><b id="mAvg">—</b></div><div class="box"><span>Best</span><b id="mBest">—</b></div><div class="box"><span>Score</span><b id="mScore">0</b></div><div class="box"><span>Accuracy</span><b id="mAcc">100%</b></div><div class="box"><span>XP Earned</span><b id="mXP">0</b></div></div><div class="controls"><button class="primary" onclick="closeModal();startGame(mode)">Play Again</button><button class="ghost" onclick="closeModal();go('home')">Home</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='reactrush_advanced_v2';
+let d=JSON.parse(localStorage.getItem(KEY)||'{"best":null,"times":[],"games":0,"attempts":0,"correct":0,"score":0,"xp":0,"streak":0,"lastDay":"","history":[],"ach":[]}');
+let settings=JSON.parse(localStorage.getItem(KEY+'_settings')||'{"sound":true,"count":true,"practice":false}');
+let mode='classic',diff='normal',state='idle',round=0,times=[],score=0,correct=0,actions=0,combo=0,greenAt=0,timer=null,raf=null,memory=[],memIndex=0,selectedColor='',rushEnd=0;
+
+const $=x=>document.getElementById(x), fmt=x=>x==null?'—':Math.round(x)+' ms', average=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):null;
+function save(){localStorage.setItem(KEY,JSON.stringify(d));localStorage.setItem(KEY+'_settings',JSON.stringify(settings));render()}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1700)}
+function beep(f=600,t=.06){if(!settings.sound)return;try{let c=new AudioContext,o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.value=.035;o.start();o.stop(c.currentTime+t)}catch(e){}}
+function level(){return Math.floor(d.xp/250)+1}
+function xpNext(){return d.xp%250}
+function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.go===id));render()}
+document.querySelectorAll('nav button').forEach(x=>x.onclick=()=>go(x.dataset.go));
+document.querySelectorAll('[data-d]').forEach(x=>x.onclick=()=>{diff=x.dataset.d;document.querySelectorAll('[data-d]').forEach(b=>b.classList.toggle('sel',b.dataset.d===diff))});
+function toggle(k){settings[k]=!settings[k];save()}
+function resetAll(){if(confirm('Reset all ReactRush data?')){d={best:null,times:[],games:0,attempts:0,correct:0,score:0,xp:0,streak:0,lastDay:'',history:[],ach:[]};save();toast('All data reset')}}
+function render(){
+ $('hBest').textContent=fmt(d.best);$('hAvg').textContent=fmt(average(d.times));$('hLevel').textContent=level();$('hXP').textContent=d.xp;$('hGames').textContent=d.games;$('hStreak').textContent=d.streak+' 🔥';
+ $('sBest').textContent=fmt(times.length?Math.min(...times):null);$('sAvg').textContent=fmt(average(times));$('sScore').textContent=score;$('sAcc').textContent=(actions?Math.round(correct/actions*100):100)+'%';$('sCombo').textContent=combo+'x';
+ $('stBest').textContent=fmt(d.best);$('stAvg').textContent=fmt(average(d.times));$('levelText').textContent='Level '+level();$('xpText').textContent=d.xp+' XP';$('xpBar').style.width=(xpNext()/250*100)+'%';$('stAcc').textContent=(d.attempts?Math.round(d.correct/d.attempts*100):100)+'%';$('stGames').textContent=d.games;$('stAttempts').textContent=d.attempts;$('stScore').textContent=d.score;$('stStreak').textContent=d.streak+' days 🔥';
+ $('recent').innerHTML=d.history.length?'<table class="table"><tr><th>Game</th><th>Result</th><th>Score</th></tr>'+d.history.slice(-7).reverse().map(x=>`<tr><td>${x.game}</td><td>${x.result}</td><td>${x.score}</td></tr>`).join('')+'</table>':'<div style="color:var(--muted)">No games yet. Start your first challenge.</div>';
+ $('attempts').innerHTML=d.times.length?'<table class="table"><tr><th>#</th><th>Reaction</th></tr>'+d.times.slice(-7).reverse().map((x,i)=>`<tr><td>${i+1}</td><td>${fmt(x)}</td></tr>`).join('')+'</table>':'<span style="color:var(--muted)">Play Classic Reaction to build your record.</span>';
+ $('sound').classList.toggle('on',settings.sound);$('count').classList.toggle('on',settings.count);$('practice').classList.toggle('on',settings.practice);renderAchievements()
+}
+const achievements=[
+ ['⚡','First Run',()=>d.games>=1,'Complete your first game'],['🥉','Under 500ms',()=>d.best!==null&&d.best<500,'React below 500ms'],['🥈','Under 300ms',()=>d.best!==null&&d.best<300,'React below 300ms'],['🥇','Lightning',()=>d.best!==null&&d.best<200,'React below 200ms'],['🔥','Streak Starter',()=>d.streak>=3,'Play 3 days in a row'],['🎮','Arcade Regular',()=>d.games>=10,'Complete 10 games'],['💎','Arcade Master',()=>d.games>=50,'Complete 50 games'],['🎯','High Scorer',()=>d.score>=5000,'Reach 5,000 total score'],['🧠','Memory Player',()=>d.history.some(x=>x.game==='Memory Sequence'),'Complete Memory Sequence'],['🚀','Level 5',()=>level()>=5,'Reach level 5']
+];
+function renderAchievements(){$('ach').innerHTML=achievements.map(a=>`<div class="badge ${a[2]()?'':'lock'}"><b>${a[0]} ${a[1]}</b><small>${a[3]}</small></div>`).join('')}
+function addXP(n){d.xp+=n}
+function startGame(m){
+ mode=m;round=0;times=[];score=0;correct=0;actions=0;combo=0;memory=[];memIndex=0;selectedColor='';clearTimeout(timer);cancelAnimationFrame(raf);state='idle';go('play');
+ let names={classic:'Classic Reaction',target:'Target Tap',color:'Color Rush',rush:'60s Reflex Rush',memory:'Memory Sequence',dont:"Don't Click"};$('gameTitle').textContent=names[m];$('action').textContent=m==='memory'?'Start Memory Game':'Start Game';$('signal').textContent='READY?';$('instruction').textContent=m==='classic'?'Wait for GREEN, then click':m==='target'?'Hit the target as fast as possible':m==='color'?'Click only the GREEN signal':m==='rush'?'React as many times as possible':'Focus and follow the rules';$('arena').className='arena';$('extraControls').innerHTML='';render()
+}
+function action(){if(state==='idle'||state==='finished'){if(mode==='memory')startMemory();else begin();}else if(['green','target','color','dont'].includes(state))arenaClick()}
+function delay(){let a=diff==='easy'?1100:diff==='hard'?600:850,b=diff==='easy'?3200:diff==='hard'?2100:2800;return a+Math.random()*(b-a)}
+function begin(){
+ if(mode==='rush'){startRush();return}
+ if(round>=5){finish();return}
+ round++;$('round').textContent=`Round ${round} / 5`;$('roundTop').textContent=round+'/5';state='waiting';$('arena').className='arena red';$('signal').textContent=mode==='dont'?'WAIT…':'WAIT…';$('instruction').textContent='Focus…';$('action').textContent='Waiting…';
+ timer=setTimeout(trigger,settings.count?delay():400)
+}
+function trigger(){
+ if(mode==='classic'){$('arena').className='arena green';$('signal').textContent='GO!';$('instruction').textContent='CLICK NOW';state='green';greenAt=performance.now();live();beep(900,.08)}
+ if(mode==='target'){state='target';$('signal').textContent='🎯';$('instruction').textContent='HIT!';$('arena').className='arena';let t=document.createElement('button');t.className='target';t.id='target';t.style.left=(10+Math.random()*80)+'%';t.style.top=(18+Math.random()*64)+'%';$('arena').appendChild(t);greenAt=performance.now();live()}
+ if(mode==='color'){state='color';selectedColor=Math.random()>.5?'GREEN':'RED';$('arena').className='arena '+(selectedColor==='GREEN'?'green':'red');$('signal').textContent=selectedColor;$('instruction').textContent='CLICK THE GREEN SIGNAL';greenAt=performance.now();live()}
+ if(mode==='dont'){state='dont';let good=Math.random()>.5;$('arena').className='arena '+(good?'green':'red');$('signal').textContent=good?'GREEN':'RED';$('instruction').textContent=good?'CLICK!':'DO NOT CLICK';greenAt=performance.now();live()}
+}
+function live(){cancelAnimationFrame(raf);let f=()=>{if(['green','target','color','dont'].includes(state)){$('live').textContent=Math.round(performance.now()-greenAt)+' ms';raf=requestAnimationFrame(f)}};raf=requestAnimationFrame(f)}
+function arenaClick(e){
+ if(state==='waiting'){actions++;state='idle';clearTimeout(timer);combo=0;score=Math.max(0,score-25);$('signal').textContent='TOO EARLY!';$('instruction').textContent='False start — next round';beep(160,.1);setTimeout(()=>round<5?begin():finish(),550);return}
+ if(mode==='classic'&&state==='green'){hit(performance.now()-greenAt);return}
+ if(mode==='target'&&state==='target'&&e.target.id==='target'){e.target.remove();hit(performance.now()-greenAt);return}
+ if(mode==='color'&&state==='color'){actions++;if(selectedColor==='GREEN')hit(performance.now()-greenAt);else miss();return}
+ if(mode==='dont'&&state==='dont'){actions++;if($('arena').classList.contains('green'))hit(performance.now()-greenAt);else miss();return}
+}
+function hit(t){
+ cancelAnimationFrame(raf);times.push(t);correct++;actions++;combo++;let mult=1+Math.min(combo-1,9)*.1;score+=Math.round(Math.max(25,1000/t*100)*mult);if(mode==='classic'){d.times.push(t);if(d.best===null||t<d.best){d.best=t;toast('🏆 New Personal Best!')}};beep(1050,.06);state='idle';$('signal').textContent=fmt(t);$('instruction').textContent=t<200?'⚡ LIGHTNING!':t<300?'🔥 Amazing!':t<450?'Great reaction!':'Good — beat it next round';$('action').textContent=round<5?'Next Round':'Finish';render();setTimeout(()=>round<5?begin():finish(),650)
+}
+function miss(){combo=0;score=Math.max(0,score-40);state='idle';$('signal').textContent='MISS';$('instruction').textContent='Focus!';beep(170,.1);render();setTimeout(()=>round<5?begin():finish(),650)}
+function startRush(){
+ state='rush';score=0;correct=0;actions=0;combo=0;round=0;rushEnd=performance.now()+60000;$('round').textContent='60 seconds';$('roundTop').textContent='RUSH';$('action').textContent='GO!';nextRush();rushClock()
+}
+function rushClock(){let left=Math.max(0,rushEnd-performance.now());$('live').textContent=(left/1000).toFixed(1)+' s';if(left>0){raf=requestAnimationFrame(rushClock)}else finish()}
+function nextRush(){if(performance.now()>=rushEnd)return;state='waiting';$('arena').className='arena red';$('signal').textContent='WAIT…';$('instruction').textContent='Get ready';timer=setTimeout(()=>{if(performance.now()>=rushEnd)return;state='green';$('arena').className='arena green';$('signal').textContent='GO!';$('instruction').textContent='CLICK!';greenAt=performance.now()},300+Math.random()*1100)}
+function startMemory(){
+ state='memoryShow';memory=Array.from({length:4},()=>Math.floor(Math.random()*4));memIndex=0;$('signal').textContent='WATCH';$('instruction').textContent='Remember the sequence';$('arena').className='arena';let i=0;let show=setInterval(()=>{if(i>=memory.length){clearInterval(show);showMemoryButtons();return}$('signal').textContent=['🟢','🔵','🟡','🟣'][memory[i++]];beep(400+i*120,.06)},600)
+}
+function showMemoryButtons(){$('signal').textContent='YOUR TURN';$('instruction').textContent='Repeat the sequence';$('extraControls').innerHTML=['🟢','🔵','🟡','🟣'].map((x,i)=>`<button class="ghost" onclick="memoryClick(${i})">${x}</button>`).join('');state='memoryInput'}
+function memoryClick(i){if(state!=='memoryInput')return;if(i===memory[memIndex]){memIndex++;correct++;actions++;score+=100;beep(700,.05);if(memIndex===memory.length){score+=500;finish()}}else{actions++;toast('Sequence failed');finish()}}
+function finish(){
+ if(state==='finished')return;clearTimeout(timer);cancelAnimationFrame(raf);state='finished';let a=average(times),b=times.length?Math.min(...times):null;let accuracy=actions?Math.round(correct/actions*100):100;let xp=Math.max(25,Math.round(score/20)+(mode==='classic'?50:0));if(settings.practice)xp=0;
+ if(!settings.practice){d.games++;d.attempts+=actions;d.correct+=correct;d.score+=score;addXP(xp);let day=new Date().toISOString().slice(0,10);if(d.lastDay!==day){if(d.lastDay){let prev=new Date(d.lastDay),now=new Date(day);let gap=Math.round((now-prev)/86400000);d.streak=gap===1?d.streak+1:1}else d.streak=1;d.lastDay=day}let names={classic:'Classic Reaction',target:'Target Tap',color:'Color Rush',rush:'60s Reflex Rush',memory:'Memory Sequence',dont:"Don't Click"};d.history.push({game:names[mode],result:mode==='classic'?fmt(a):(mode==='memory'?'Sequence complete':correct+' hits'),score});if(d.history.length>30)d.history.shift();save()}
+ $('modalTitle').textContent=score>3000?'🔥 Elite Reflex Run!':'Challenge Complete ⚡';$('modalScore').textContent=score;$('mAvg').textContent=fmt(a);$('mBest').textContent=fmt(b);$('mScore').textContent=score;$('mAcc').textContent=accuracy+'%';$('mXP').textContent='+'+xp;$('modal').classList.add('show');beep(1200,.12)
+}
+function closeModal(){$('modal').classList.remove('show')}
+render()
+</script>
+</body>
+</html>'''
+
+p=Path("/mnt/data/ReactRush-v2/index.html")
+p.parent.mkdir(parents=True,exist_ok=True)
+p.write_text(html,encoding="utf-8")
+z=Path("/mnt/data/ReactRush-v2-GitHub.zip")
+with zipfile.ZipFile(z,"w",zipfile.ZIP_DEFLATED) as f:f.write(p,"index.html")
+print("READY:",p)
+print("ZIP:",z)
